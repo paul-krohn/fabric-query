@@ -46,6 +46,36 @@ def print_hosts():
 
 def example_command(argument1="", argument2=""):
     run("ls %s %s" % (argument1, argument2))
+def puppet_agent(puppet_environment=False, masterport=False, debug=False):
+    """
+    Run puppet on the remote host.
+    Optionally set the environment, masterport, and debug output:
+    puppet_agent:development,8151,True
+    """
+
+    # detect/set environment, masterport, debug
+    puppet_environment_optarg = ""
+    if puppet_environment:
+        puppet_environment_optarg = " --environment %s" % puppet_environment
+    masterport_optarg = ""
+    if masterport:
+        masterport_optarg = " --masterport %s" % masterport
+    puppet_debug = ""
+    if debug:
+        puppet_debug = " --debug"
+
+    # Puppet agent returns 2 when it completes and makes changes, ie for a successful
+    # run. So we set warn_only=True, and evaluate the return code explicitly.
+    puppet_result = run("sudo puppet agent --test %s%s%s" %
+                        (puppet_environment_optarg, masterport_optarg, puppet_debug),
+                        warn_only=True)
+    if puppet_result.return_code in [0, 2]:
+        puts("puppet run successful, returned %s" % puppet_result.return_code)
+    else:
+        print puppet_result
+        raise SystemExit()
+
+
 def next_cron_run_time(command_name=False, output=True, user='root'):
     """
     Get the next time a cron will run on a host.
