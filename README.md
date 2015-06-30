@@ -10,7 +10,7 @@ Invoke fabric with: ```fab -f /path/to/repo/fabfile.py ```
 As an example, you can set the region, and a query:
 
 ```
-fab -f /path/to/repo/fabfile.py region:us-west-2 query:tag=cluster_name,value=application-name ls
+fab -f /path/to/repo/fabfile.py region:us-west-2 query:tag=cluster_name,value=application-name example_command:/etc/sudoers.d,/etc/rsyslog.d
 ```
 
 \* Alternately: create ~/.fabricrc, containing at least ```fabfile = /path/to/repo/fabfile.py```
