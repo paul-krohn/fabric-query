@@ -7,6 +7,7 @@ aws_region = None
 if 'default_region' in env.keys():
     aws_region = env.default_region
 
+
 @runs_once
 def region(arg_region):
     """
