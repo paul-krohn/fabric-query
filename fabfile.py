@@ -31,7 +31,7 @@ def query(value=None, tag="Name"):
     query_instances = conn.get_all_instances(filters=query_filters)
     for reservation in query_instances:
         for instance in reservation.instances:
-            # print instance.id
+            # assumes the Name tag is the FQDN.
             env.hosts.append(instance.tags['Name'])
     env.hosts = sorted(env.hosts)
 
