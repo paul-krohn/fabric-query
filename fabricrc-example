@@ -1,0 +1,2 @@
+fabfile = /path/to/this/repo/fabfile.py
+default_region = ap-southeast-1
