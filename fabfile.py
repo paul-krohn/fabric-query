@@ -46,6 +46,11 @@ def print_hosts():
 
 def example_command(argument1="", argument2=""):
     run("ls %s %s" % (argument1, argument2))
+
+
+def command(command):
+    run(command)
+
 def puppet_agent(puppet_environment=False, masterport=False, debug=False):
     """
     Run puppet on the remote host.
