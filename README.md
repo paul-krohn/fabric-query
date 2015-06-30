@@ -13,4 +13,4 @@ As an example, you can set the region, and a query:
 fab -f /path/to/repo/fabfile.py region:us-west-2 query:tag=cluster_name,value=application-name example_command:/etc/sudoers.d,/etc/rsyslog.d
 ```
 
-\* Alternately: create ~/.fabricrc, containing at least ```fabfile = /path/to/repo/fabfile.py```
+To simplify usage, create ~/.fabricrc, specifying the path to the fabfile, and the default region. See fabricrc-example.
