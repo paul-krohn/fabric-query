@@ -1,6 +1,6 @@
 ### Installation ###
 
-* create a virtualenvwith python 2.7: ```virtualenv --python /usr/local/bin/python2.7 /some/where```
+* create a virtualenv with python 2.7: ```virtualenv --python /usr/local/bin/python2.7 /some/where```
 * activate it: ```. /some/where/bin/activate```
 * install fabric and boto: ```pip install fabric boto```
 
