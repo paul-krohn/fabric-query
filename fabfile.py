@@ -51,8 +51,9 @@ def example_command(argument1="", argument2=""):
     run("ls %s %s" % (argument1, argument2))
 
 
-def command(command):
-    run(command)
+def command(a_command):
+    run(a_command)
+
 
 def puppet_agent(puppet_environment=False, masterport=False, debug=False):
     """
