@@ -1,4 +1,4 @@
-from fabric.api import env, puts, run
+from fabric.api import env, put, puts, run
 from fabric.decorators import runs_once
 from boto.ec2 import connect_to_region
 import json
@@ -123,3 +123,29 @@ def next_cron_run_time(command_name=False, output=True, user='root'):
         return next_run_epoch_time
     else:
         puts("no cron entry for %s matching %s" % (user, command_name))
+
+
+def create_user(username, authorized_keys_file=False):
+
+    if not _check_user(username):
+        run("sudo useradd %s" % username)
+    _install_authorized_keys_file(username,authorized_keys_file)
+
+
+def _install_authorized_keys_file(username, authorized_keys_file):
+    if authorized_keys_file:
+        homedir = "/home/%s" % username
+        run("sudo mkdir -p %s/.ssh" % homedir)
+        put(authorized_keys_file, "%s/.ssh/authorized_keys" % homedir, use_sudo=True, mode=0600)
+        run("sudo chmod -R go-rwx %s/.ssh" % homedir)
+        run("sudo chown -R %s:%s %s/.ssh" % (username, username, homedir))
+
+
+def _check_user(username):
+    check_user_result= run("grep '%s' /etc/passwd"% username,
+                           warn_only=True,
+                           quiet=True)
+    if check_user_result.return_code is 0:
+        return True
+    else:
+        return False
