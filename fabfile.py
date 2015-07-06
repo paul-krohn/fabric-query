@@ -1,10 +1,11 @@
-from fabric.api import env, put, puts, run
+from fabric.api import env, put, puts, run, settings
 from fabric.decorators import runs_once
 from boto.ec2 import connect_to_region
 import json
 import re
 import time
 import calendar
+import os
 
 aws_region = None
 if 'default_region' in env.keys():
@@ -149,3 +150,18 @@ def _check_user(username):
         return True
     else:
         return False
+
+def git_pull(repo_url, path='', branch='master'):
+    with settings(forward_agent=True):
+        if not path:
+            path = _dir_from_repo(repo_url)
+        git_already_cloned = run("[ -d %s ]" % path, warn_only=True)
+        if git_already_cloned.return_code:
+            run("git clone %s %s" % (repo_url, path), quiet=True)
+        run("cd %s && git checkout %s && git pull origin %s" % (path, branch, branch))
+
+
+def _dir_from_repo(repo_url):
+    # git@github.com:krux/puppet-manifests.git
+    repo_name = os.path.basename(repo_url)
+    return re.sub(".git$", "", repo_name)
