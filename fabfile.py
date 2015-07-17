@@ -100,7 +100,11 @@ def next_cron_run_time(command_name=False, output=True, user='root'):
         # (cron_minute, cron_hour)\
         cron_parts = re.split(" +", crontab_result)
         cron_minute = int(cron_parts[0])
-        cron_hour = int(cron_parts[1])
+        cron_hours = cron_parts[1].split(",")
+        # coerce to ints
+        for i in range( 0, len(cron_hours)):
+            cron_hours[i] = int(cron_hours[i])
+
         # get the current UTC hour, minute; python type oddness requires secondary assignment
         current_gmtime = time.gmtime()
         current_hour = current_gmtime[3]
@@ -109,16 +113,23 @@ def next_cron_run_time(command_name=False, output=True, user='root'):
 
         next_run_offset = 0
         # cron hour is < current hour, therefore tomorrow
-        if cron_hour < current_hour:
-            next_run_offset = 86400
-        elif cron_hour == current_hour:
-            if cron_minute <= current_minute:
-                # tomorrow, assuming it has already run
+        next_run_epoch_time = False
+        for cron_hour in cron_hours:
+            if cron_hour < current_hour:
                 next_run_offset = 86400
+            elif cron_hour == current_hour:
+                if cron_minute <= current_minute:
+                    # tomorrow, assuming it has already run
+                    next_run_offset = 86400
 
-        next_run_base =  time.gmtime(int(time.time()) + next_run_offset)
-        next_run_epoch_time = calendar.timegm(
-            (next_run_base[0], next_run_base[1], next_run_base[2], cron_hour, cron_minute, 0))
+            next_run_base =  time.gmtime(int(time.time()) + next_run_offset)
+            next_run_candidate_epoch = calendar.timegm(
+                (next_run_base[0], next_run_base[1], next_run_base[2], cron_hour, cron_minute, 0))
+            if not next_run_epoch_time:
+                next_run_epoch_time = next_run_candidate_epoch
+            else:
+                if  next_run_candidate_epoch < next_run_epoch_time:
+                    next_run_epoch_time = next_run_candidate_epoch
         if output:
             puts("next run of %s at: %s" % (" ".join(cron_parts[5:len(cron_parts)]), time.strftime("%F %X", time.gmtime(next_run_epoch_time))))
         return next_run_epoch_time
